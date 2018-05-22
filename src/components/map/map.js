@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import config from '../../config/config.js';      
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import myLoc from '../../myloc.png';
 
 export class MapContainer extends Component {
   constructor() {
@@ -69,17 +70,17 @@ export class MapContainer extends Component {
               key={marker.name}
               position={marker.position
                 ? {lat: marker.position.lat, lng: marker.position.lng}
-                : undefined}
-              icon={marker.icon}/>
+                : undefined}/>
           )
         })}
 
         <Marker
-          name={'Current location'}
+          name={'Current search'}
+          onClick={this.onMarkerClick} 
           icon={{
-            url:"../../logo.svg",
+            url: myLoc,
             anchor: new this.props.google.maps.Point(32,32),
-            scaledSize: new this.props.google.maps.Size(64,64) 
+            scaledSize: new this.props.google.maps.Size(32,32) 
           }}/>
  
         <InfoWindow onClose={this.onInfoWindowClose}
@@ -87,6 +88,7 @@ export class MapContainer extends Component {
                     marker={this.state.activeMarker}>
             <div>
               <h1>{this.state.selectedPlace.name}</h1>
+              <h2>address here</h2>
               <h2>description here</h2>
             </div>
         </InfoWindow>

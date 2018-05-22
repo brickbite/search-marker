@@ -117,7 +117,7 @@ class App extends Component {
         </p>
 
         <button onClick={this.changeView}>Toggle Map/List</button>
-        
+
         {this.state.view === 'map'
           ? <div>
               <MapInfo
