@@ -5,9 +5,9 @@ export default class Form extends React.Component {
   constructor() {
     super();
     this.state = {
-      lat: 33.839268,
-      lng: -117.915434,
-      radius: 1
+      lat: 33.831504,
+      lng: -117.911949,
+      radius: 25
     }
   }
 
@@ -26,7 +26,7 @@ export default class Form extends React.Component {
       <div>
         Latitude: <input value={this.state.lat} onChange={(e) => this.update(e, 'lat')}/>
         Longitude: <input value={this.state.lng} onChange={(e) => this.update(e, 'lng')}/>
-        Radius <input value={this.state.radius} onChange={(e) => this.update(e, 'radius')}/>
+        <p>Radius: {this.props.radius} miles</p>
         <button onClick={this.props.request}>Search</button>
       </div>
     )

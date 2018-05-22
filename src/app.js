@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './app.css';
-
+import throttle from 'lodash/throttle';
 import axios from 'axios';
 
 import Map from './components/map/map.js';
 import MapInfo from './components/map/map-info.js';
 import List from './components/list/list.js';
-import Form from './components/list/form.js';
+import Form from './components/list/list-form.js';
+import RadiusChoice from './components/list/radius-choice';
 
 class App extends Component {
   constructor() {
@@ -15,10 +16,10 @@ class App extends Component {
 
     this.state = {
       sessionId: null,
-      lat: 33.839268,
-      lng: -117.915434,
-      radius: 50,
-      radiusChoice: [1, 2, 5, 10, 25, 50],
+      lat: 33.831504,
+      lng: -117.911949,
+      radius: 25,
+      radiusChoice: [5, 10, 25, 50, 100],
       searchByPanning: false,
       searchByZooming: false,
       markers: [
@@ -51,24 +52,30 @@ class App extends Component {
       view: 'map'
     };
 
-    this.request = this.request.bind(this);
+    this.getSession = throttle(this.getSession.bind(this), 2000);
+    this.requestMarkers = throttle(this.requestMarkers.bind(this), 2000);
     this.changeView = this.changeView.bind(this);
     this.update = this.update.bind(this);
   }
 
   componentDidMount() {
+    this.getSession();    
+  }
+
+  getSession() {
     axios.post(process.env.REACT_APP_URL_AUTH, {
       username: process.env.REACT_APP_URL_USER,
       password: process.env.REACT_APP_URL_PASS
     }).then(response => {
-      this.setState({sessionId: response.data.session.sessionId}, this.request);
+      this.setState({sessionId: response.data.session.sessionId}, this.requestMarkers);
     }).catch(error => {
       console.log(error);
       // handle error
     });
   }
 
-  request() {
+  requestMarkers() {
+    // TODO: check if valid session to expire invalid sessions
     if (!this.state.sessionId) {
       console.log('no id!');
       return // TODO: get sessionId, then do request;
@@ -87,8 +94,8 @@ class App extends Component {
       sessionId: this.state.sessionId
     };
 
-    console.log(process.env.REACT_APP_URL_REQUEST);
-    console.log(payload);
+    console.log(`POST to ${process.env.REACT_APP_URL_REQUEST}`);
+    console.log('payload is:', payload);
 
     axios.post(process.env.REACT_APP_URL_REQUEST, payload)
       .then(response => {
@@ -144,6 +151,9 @@ class App extends Component {
                   searchByZooming: !this.state.searchByZooming
                   })}/>
                 Search by zooming
+                <RadiusChoice
+                  radiusChoice={this.state.radiusChoice}
+                  update={this.update}/>
               </div>
               <MapInfo
                 lat={this.state.lat}
@@ -157,17 +167,20 @@ class App extends Component {
                 update={this.update}
                 searchByPanning={this.state.searchByPanning}
                 searchByZooming={this.state.searchByZooming}
-                requestMarkers={this.request}/>
+                requestMarkers={this.requestMarkers}/>
             </div>
           : null}
 
         {this.state.view === 'list'
           ? <div>
+              <RadiusChoice
+                radiusChoice={this.state.radiusChoice}
+                update={this.update}/>
               <Form
                 lat={this.state.lat}
                 lng={this.state.lng}
-                request={this.request}
-                radius={this.state.radius}/>
+                radius={this.state.radius}
+                request={this.requestMarkers}/>
               <List
                 markers={this.state.markers}/>
             </div>

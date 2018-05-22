@@ -11,6 +11,7 @@ export default class ListContainer extends Component {
       <div style={style}>
         {this.props.markers.map((marker, index) => {
           return (
+            // TODO: Pagination
             <div key={marker.name}>
               <h1>{index}: {marker.name}</h1>
               <p>{marker.position ? `lat: ${marker.position.lat}, lng: ${marker.position.lng}` : null}</p>
