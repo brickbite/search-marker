@@ -48,7 +48,9 @@ class App extends Component {
     });
   }
 
-  requestMarkers() {
+  requestMarkers(lat = this.state.lat, lng = this.state.lng) {
+    // console.log(lat, lng);
+
     // TODO: check if valid session to expire invalid sessions
     if (!this.state.sessionId) {
       console.log('no id!');
@@ -63,8 +65,8 @@ class App extends Component {
       radius: this.state.radius,
       useLatLng: false,
       filter: process.env.REACT_APP_URL_FILTER,
-      lat: this.state.lat,
-      lng: this.state.lng,
+      lat: lat,
+      lng: lng,
       sessionId: this.state.sessionId
     };
 
@@ -76,7 +78,9 @@ class App extends Component {
         console.log('success');
         console.log(response);
         // update markers in state
-        // this.update(response.markers);
+        // this.update({lat: lat
+        // lng: lng,
+        // markers: response.markers});
       })  
       .catch(error => {
         console.log('error');
@@ -153,7 +157,8 @@ class App extends Component {
                 lat={this.state.lat}
                 lng={this.state.lng}
                 radius={this.state.radius}
-                request={this.requestMarkers}/>
+                request={this.requestMarkers}
+                update={this.update}/>
               <List
                 markers={this.state.markers}/>
             </div>

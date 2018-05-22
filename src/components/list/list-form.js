@@ -16,10 +16,19 @@ export default class Form extends React.Component {
   }
 
   update(e, field) {
+    let val = Number(e.target.value)
     let updated = {};
-    // TODO: better validation
-    updated[field] = isNaN(Number(e.target.value)) ? 0.1 : Number(e.target.value);
-    this.setState(updated, console.log(this.state));
+
+    // TODO: better validation to allow entry of decimal values
+    if (isNaN(val)) {
+      val = 0;
+    } else if (field === 'lat' && (val > 90 || val < -90)) {
+      val = 0;
+    } else if (field === 'lng' && (val > 180 || val < -180)) {
+      val = 0;
+    }
+    updated[field] = val;
+    this.setState(updated);
   }
 
   render() {
@@ -28,7 +37,7 @@ export default class Form extends React.Component {
         Latitude: <input value={this.state.lat} onChange={(e) => this.update(e, 'lat')}/>
         Longitude: <input value={this.state.lng} onChange={(e) => this.update(e, 'lng')}/>
         <p>Search Radius: {this.props.radius} {this.state.distUnit}</p>
-        <button onClick={this.props.request}>Search</button>
+        <button onClick={() => this.props.request(this.state.lat, this.state.lng)}>Search</button>
       </div>
     )
   }
