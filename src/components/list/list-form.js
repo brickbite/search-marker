@@ -1,5 +1,4 @@
 import React from 'react';
-// import validate from '../../utility/validation.js';
 
 export default class Form extends React.Component {
   constructor() {
@@ -17,6 +16,7 @@ export default class Form extends React.Component {
 
   update(e, field) {
     let updated = {};
+    // TODO: better validation
     updated[field] = isNaN(Number(e.target.value)) ? 0.1 : Number(e.target.value);
     this.setState(updated, console.log(this.state));
   }

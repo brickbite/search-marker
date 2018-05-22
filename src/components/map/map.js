@@ -20,10 +20,6 @@ export class MapContainer extends Component {
   // componentDidMount() {
   //   console.log('map mounted');
   //   console.log(this.props);
-  //   console.log(this.props.google);
-  //   this.props.google.maps.event.addListener(this.props.google.maps, 'zoom_changed', (event) => {
-  //     console.log('zoom changed');
-  //   });
   // }
  
   onMarkerClick = (props, marker, e) => {
@@ -56,8 +52,8 @@ export class MapContainer extends Component {
 
   onZoomChanged(event) {
     if (this.props.searchByZooming) {
-      console.log('zoom changed enabled');
-      console.log(event);
+      console.log('zoom event', event);
+      // TODO: check for changed zoom level, translate into an update for miles before requesting new markers.
       this.props.requestMarkers();
     }
   }
