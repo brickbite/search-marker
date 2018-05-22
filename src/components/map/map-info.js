@@ -6,7 +6,8 @@ export default class MapInfo extends React.Component {
     this.state = {
       lat: null,
       lng: null,
-      radius: null
+      radius: null,
+      distUnit: 'miles'
     };
   }
 
@@ -19,7 +20,7 @@ export default class MapInfo extends React.Component {
       <div>
         <p>Latitude: {this.state.lat}</p>
         <p>Longitude: {this.state.lng}</p>
-        <p>Radius: {this.state.radius}</p>
+        <p>Radius: {this.state.radius} {this.state.distUnit}</p>
       </div>
     )
   }

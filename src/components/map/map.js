@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
-import config from '../../config/config.js';      
+import React, { Component } from 'react'; 
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
-import myLoc from '../../myloc.png';
+import targetLoc from '../../targetloc.png';
 
 export class MapContainer extends Component {
   constructor() {
@@ -14,12 +13,17 @@ export class MapContainer extends Component {
 
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.onInfoWindowClose = this.onInfoWindowClose.bind(this);
-    this.centerMoved = this.centerMoved.bind(this);
+    this.onCenterMoved = this.onCenterMoved.bind(this);
+    this.onZoomChanged = this.onZoomChanged.bind(this);
   }
 
   // componentDidMount() {
-  //   console.log('map mouned');
+  //   console.log('map mounted');
   //   console.log(this.props);
+  //   console.log(this.props.google);
+  //   this.props.google.maps.event.addListener(this.props.google.maps, 'zoom_changed', (event) => {
+  //     console.log('zoom changed');
+  //   });
   // }
  
   onMarkerClick = (props, marker, e) => {
@@ -38,12 +42,23 @@ export class MapContainer extends Component {
     });
   }
 
-  centerMoved(mapProps, map) {
+  onCenterMoved(mapProps, map) {
     // console.log(map)
-    mapProps.center.lat = map.center.lat();
-    mapProps.center.lng = map.center.lng();
-    // console.log(mapProps.center);
-    this.props.update({lat: map.center.lat(), lng: map.center.lng()});
+    if (this.props.searchByPanning) {
+      mapProps.center.lat = map.center.lat();
+      mapProps.center.lng = map.center.lng();
+      // console.log(mapProps.center);
+      this.props.update({lat: map.center.lat(), lng: map.center.lng()});
+      this.props.requestMarkers();
+    }
+  }
+
+  onZoomChanged(event) {
+    if (this.props.searchByZooming) {
+      console.log('zoom changed enabled');
+      console.log(event);
+      this.props.requestMarkers();
+    }
   }
 
   render() {
@@ -58,7 +73,8 @@ export class MapContainer extends Component {
         zoom={10}
         center={this.props.center}
         initialCenter={this.props.initialCenter}
-        onDragend={this.centerMoved}
+        onDragend={this.onCenterMoved}
+        onZoom_changed={this.onZoomChanged}
         style={style}>
         
         {this.props.markers.map(marker => {
@@ -78,7 +94,7 @@ export class MapContainer extends Component {
           name={'Current search'}
           onClick={this.onMarkerClick} 
           icon={{
-            url: myLoc,
+            url: targetLoc,
             anchor: new this.props.google.maps.Point(32,32),
             scaledSize: new this.props.google.maps.Size(32,32) 
           }}/>
@@ -98,5 +114,5 @@ export class MapContainer extends Component {
 }
  
 export default GoogleApiWrapper({
-  apiKey: (config.MAPS_API_KEY)
+  apiKey: (process.env.REACT_APP_MAPS_API_KEY)
 })(MapContainer)

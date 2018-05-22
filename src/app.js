@@ -3,7 +3,6 @@ import logo from './logo.svg';
 import './app.css';
 
 import axios from 'axios';
-import config from './config/config.js';
 
 import Form from './components/form/form.js';
 import List from './components/list/list.js';
@@ -20,6 +19,8 @@ class App extends Component {
       lng: -117.915434,
       radius: 50,
       radiusChoice: [1, 2, 5, 10, 25, 50],
+      searchByPanning: false,
+      searchByZooming: false,
       markers: [
         {
           title: 'The marker`s title will appear as a tooltip.',
@@ -44,15 +45,15 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // axios.post(config.URL_AUTH, {
-    //   username: config.URL_USER,
-    //   password: config.URL_PASS
-    // }).then(response => {
-    //   this.setState({sessionId: response.data.session.sessionId}, this.request);
-    // }).catch(error => {
-    //   console.log(error);
-    //   // handle error
-    // });
+    axios.post(process.env.REACT_APP_URL_AUTH, {
+      username: process.env.REACT_APP_URL_USER,
+      password: process.env.REACT_APP_URL_PASS
+    }).then(response => {
+      this.setState({sessionId: response.data.session.sessionId}, this.request);
+    }).catch(error => {
+      console.log(error);
+      // handle error
+    });
   }
 
   request() {
@@ -68,16 +69,16 @@ class App extends Component {
       },
       radius: this.state.radius,
       useLatLng: false,
-      filter: config.URL_FILTER,
+      filter: process.env.REACT_APP_URL_FILTER,
       lat: this.state.lat,
       lng: this.state.lng,
       sessionId: this.state.sessionId
     };
 
-    console.log(config.URL_REQUEST);
+    console.log(process.env.REACT_APP_URL_REQUEST);
     console.log(payload);
 
-    axios.post(config.URL_REQUEST, payload)
+    axios.post(process.env.REACT_APP_URL_REQUEST, payload)
       .then(response => {
         console.log('success');
         console.log(response);
@@ -96,6 +97,7 @@ class App extends Component {
 
   update(field, value) {
     if (typeof field === 'object' && value === undefined) {
+      console.log('updating state to: ', field);
       this.setState(field);
     } else {
       let updated = {};
@@ -113,13 +115,23 @@ class App extends Component {
           <h1 className="App-title">Search Marker App</h1>
         </header>
         <p className="App-intro">
-          Enter lat/long/radius.
+          Find nearby locations!
         </p>
 
-        <button onClick={this.changeView}>Toggle Map/List</button>
+        <button onClick={this.changeView}><h1>Toggle Map/List</h1></button>
 
         {this.state.view === 'map'
           ? <div>
+              <div>
+                <input type="checkbox" onChange={() => this.update({
+                  searchByPanning: !this.state.searchByPanning
+                  })}/>
+                Search by panning
+                <input type="checkbox" onChange={() => this.update({
+                  searchByZooming: !this.state.searchByZooming
+                  })}/>
+                Search by zooming
+              </div>
               <MapInfo
                 lat={this.state.lat}
                 lng={this.state.lng}
@@ -129,7 +141,10 @@ class App extends Component {
                 markers={this.state.markers}
                 center={{lat: this.state.lat, lng: this.state.lng}}
                 initialCenter={{lat: this.state.lat, lng: this.state.lng}}
-                update={this.update}/>
+                update={this.update}
+                searchByPanning={this.state.searchByPanning}
+                searchByZooming={this.state.searchByZooming}
+                requestMarkers={this.request}/>
             </div>
           : null}
 
