@@ -4,10 +4,10 @@ import './app.css';
 
 import axios from 'axios';
 
-import Form from './components/form/form.js';
-import List from './components/list/list.js';
 import Map from './components/map/map.js';
 import MapInfo from './components/map/map-info.js';
+import List from './components/list/list.js';
+import Form from './components/list/form.js';
 
 class App extends Component {
   constructor() {
