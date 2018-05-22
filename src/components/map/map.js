@@ -3,25 +3,23 @@ import config from '../../config/config.js';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 
 export class MapContainer extends Component {
-  state = {
-    showingInfoWindow: false,
-    activeMarker: {},
-    selectedPlace: {},
+  constructor() {
+    super();
+    this.state = {
+      showingInfoWindow: false,
+      activeMarker: {},
+      selectedPlace: {},
+    };
+
+    this.onMarkerClick = this.onMarkerClick.bind(this);
+    this.onInfoWindowClose = this.onInfoWindowClose.bind(this);
+    this.centerMoved = this.centerMoved.bind(this);
   }
 
-  renderChildren() {
-    const {children} = this.props;
-
-    if (!children) return;
-
-    return React.Children.map(children, c => {
-      return React.cloneElement(c, {
-        map: this.map,
-        google: this.props.google,
-        mapCenter: this.state.currentLocation
-      });
-    });
-  }
+  // componentDidMount() {
+  //   console.log('map mouned');
+  //   console.log(this.props);
+  // }
  
   onMarkerClick = (props, marker, e) => {
     console.log(this.state);
@@ -33,17 +31,18 @@ export class MapContainer extends Component {
   }
 
   onInfoWindowClose = () => {
-    console.log('window closed');
-    // console.log(this.state);
+    console.log('info window closed');
+    this.setState({
+      showingInfoWindow: false
+    });
   }
 
-  onMapClicked = (props) => {
-    if (this.state.showingInfoWindow) {
-      this.setState({
-        showingInfoWindow: false,
-        activeMarker: null
-      })
-    }
+  centerMoved(mapProps, map) {
+    // console.log(map)
+    mapProps.center.lat = map.center.lat();
+    mapProps.center.lng = map.center.lng();
+    // console.log(mapProps.center);
+    this.props.update({lat: map.center.lat(), lng: map.center.lng()});
   }
 
   render() {
@@ -51,18 +50,37 @@ export class MapContainer extends Component {
       width: '100%',
       height: '50%'
     };
-
+    
     return (
-      <Map google={this.props.google} zoom={13} style={style}>
+      <Map
+        google={this.props.google}
+        zoom={10}
+        center={this.props.center}
+        initialCenter={this.props.initialCenter}
+        onDragend={this.centerMoved}
+        style={style}>
         
         {this.props.markers.map(marker => {
           // console.log(marker);
-          return (<Marker
-            name={marker.name} 
-            onClick={this.onMarkerClick} 
-            key={marker.name}
-            position={marker.position ? {lat: marker.position.lat, lng: marker.position.lng} : undefined}/>)
+          return (
+            <Marker
+              name={marker.name} 
+              onClick={this.onMarkerClick} 
+              key={marker.name}
+              position={marker.position
+                ? {lat: marker.position.lat, lng: marker.position.lng}
+                : undefined}
+              icon={marker.icon}/>
+          )
         })}
+
+        <Marker
+          name={'Current location'}
+          icon={{
+            url:"../../logo.svg",
+            anchor: new this.props.google.maps.Point(32,32),
+            scaledSize: new this.props.google.maps.Size(64,64) 
+          }}/>
  
         <InfoWindow onClose={this.onInfoWindowClose}
                     visible={this.state.showingInfoWindow}
