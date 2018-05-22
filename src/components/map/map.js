@@ -16,14 +16,8 @@ export class MapContainer extends Component {
     this.onCenterMoved = this.onCenterMoved.bind(this);
     this.onZoomChanged = this.onZoomChanged.bind(this);
   }
-
-  // componentDidMount() {
-  //   console.log('map mounted');
-  //   console.log(this.props);
-  // }
  
   onMarkerClick = (props, marker, e) => {
-    console.log(this.state);
     this.setState({
       selectedPlace: props,
       activeMarker: marker,
@@ -32,19 +26,15 @@ export class MapContainer extends Component {
   }
 
   onInfoWindowClose = () => {
-    console.log('info window closed');
-    console.log(this.state);
     this.setState({
       showingInfoWindow: false
     });
   }
 
   onCenterMoved(mapProps, map) {
-    // console.log(map)
     if (this.props.searchByPanning) {
       mapProps.center.lat = map.center.lat();
       mapProps.center.lng = map.center.lng();
-      // console.log(mapProps.center);
       this.props.update({lat: map.center.lat(), lng: map.center.lng()});
       this.props.requestMarkers();
     }
@@ -75,7 +65,6 @@ export class MapContainer extends Component {
         style={style}>
         
         {this.props.markers.map(marker => {
-          // console.log(marker);
           return (
             <Marker
               name={marker.name} 
@@ -84,7 +73,7 @@ export class MapContainer extends Component {
               address={marker.address}
               position={marker.position
                 ? {lat: marker.position.lat, lng: marker.position.lng}
-                : undefined}/>
+                : null}/>
           )
         })}
 

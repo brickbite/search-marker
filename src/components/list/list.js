@@ -14,9 +14,9 @@ export default class ListContainer extends Component {
             // TODO: Pagination
             <div key={marker.name}>
               <h1>{index}: {marker.name}</h1>
-              <p>{marker.position ? `lat: ${marker.position.lat}, lng: ${marker.position.lng}` : null}</p>
+              {/* <p>{marker.position ? `lat: ${marker.position.lat}, lng: ${marker.position.lng}` : null}</p> */}
               <p>{marker.address}</p>
-              <p>Distance (from search point) here</p>
+              <p> TODO: Distance (from search point) here</p>
             </div>
           )
         })}

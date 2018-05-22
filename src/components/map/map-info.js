@@ -20,7 +20,7 @@ export default class MapInfo extends React.Component {
       <div>
         <p>Latitude: {this.state.lat}</p>
         <p>Longitude: {this.state.lng}</p>
-        <p>Radius: {this.state.radius} {this.state.distUnit}</p>
+        <p>Search Radius: {this.state.radius} {this.state.distUnit}</p>
       </div>
     )
   }
