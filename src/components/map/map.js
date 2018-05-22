@@ -37,6 +37,7 @@ export class MapContainer extends Component {
 
   onInfoWindowClose = () => {
     console.log('info window closed');
+    console.log(this.state);
     this.setState({
       showingInfoWindow: false
     });
@@ -84,6 +85,7 @@ export class MapContainer extends Component {
               name={marker.name} 
               onClick={this.onMarkerClick} 
               key={marker.name}
+              address={marker.address}
               position={marker.position
                 ? {lat: marker.position.lat, lng: marker.position.lng}
                 : undefined}/>
@@ -103,9 +105,8 @@ export class MapContainer extends Component {
                     visible={this.state.showingInfoWindow}
                     marker={this.state.activeMarker}>
             <div>
-              <h1>{this.state.selectedPlace.name}</h1>
-              <h2>address here</h2>
-              <h2>description here</h2>
+              <h1>{this.state.activeMarker.name}</h1>
+              <h2>{this.state.activeMarker.address}</h2>
             </div>
         </InfoWindow>
       </Map>
